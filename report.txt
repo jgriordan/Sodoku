@@ -1,0 +1,5 @@
+John Riordan
+Lab 5
+report.txt
+
+The URL for my project is https://github.com/jgriordan/Sodoku which contains this file, report.txt.
