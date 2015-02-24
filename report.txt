@@ -3,3 +3,85 @@ Lab 5
 report.txt
 
 The URL for my project is https://github.com/jgriordan/Sodoku which contains this file, report.txt.
+
+How the user uses the program:
+For part 2, the file is main.cpp and the Makefile makes the executable main.
+For this part, user simply runs the main executable.
+Two sodoku puzzles are displayed to the screen, one with chars and one with ints.
+The puzzles are drawn from the files sodoku.txt and wordoku.txt.
+For part 3, the file is sodoku.cpp and the Makefile makes the executable sodoku.
+For this part, when the user runs the sodoku executable, he is then prompted to enter the name of a file.
+This file needs to be a 9x9 text file of ints separated by whitespace for the program to work.
+Once the user chooses a valid file name, the initial puzzle from the file is displayed.
+The user is then prompted for a column, row, and value to add to the puzzle.
+This value, row, and column are checked for validity and an updated (maybe unchanged) puzzle is displayed.
+Validity is determined by:
+	The row and column are between 1 and 9.
+	The location selected did not have a value in the initial puzzle from the file.
+	There is no repeat of the value in its row, column, or 3x3 box.
+	The value is between 1 and 9.
+*This puzzle is <int>, but it would work for chars that the value must be in the first row/word of the file.
+Prompting to fill out the puzzle repeats until the puzzle is entirely filled with non-zero values.
+
+How the program works internally:
+The Puzzle class (in Puzzle.h) is templated.
+It has 4 private variables:
+	2D T vector myPuzzle containing the values of the puzzle
+	int array vector initialLocs containing the row and column where all the initial values are
+	T vector myValues containing the 9 values that can be placed in the puzzle
+	T blank containing the value representing a blank space in the puzzle
+It has a constructor with a parameter of the string file name containing the initial puzzle.
+If T isn't int, it loops 9 times reading from the file to get the 9 valid values.
+If T is int, those values are 1-9.
+Those values are stored in myValues.
+The constructor loops 9x9 (81) times reading from the file to fill myPuzzle.
+Each time the value is in myValues (not a blank), its location is added to initialLocs.
+If the value is not in myValues, blank takes the value as it is a blank.
+Puzzle's get function returns T of the specified location (1-9) or an error message if out of range.
+Puzzle's set function sets the T value at the specified (col,row) location, returning 1-failure, 0-success.
+Set checks the location to be in range, printing an error message and returning 1 if not.
+Set checks that the value is in myValues, printing an error message and returning 1 if not.
+Set loops to check the value isn't repeated in the row, column, or 3x3 box.
+It prints an appropriate error message and returns 1 if it is repeated.
+Puzzle's print functions loops through all rows and cols in myPuzzle to print it to standard output.
+Puzzle's isComplete function loops through myPuzzle to find a value equal to blank.
+If one is found, the puzzle isn't complete so 0 is returned.
+Otherwise, the puzzle is complete and 1 is returned.
+The part 2 driver (main.cpp/main executable) works as follows:
+It sets two strings to the names of two examples I made- one of ints and another of chars.
+Those files are sodoku.txt and wordoku.txt.
+Puzzle of int's constructor is called with sodoku.txt.
+Puzzle of char's constructor is called with wordoku.txt.
+Each object's print function is called to show correctness.
+The part 3 driver (sodoku.txt/sodoku executable) works as follows:
+Displays a prompt for the file name to standard output.
+Gets a string for the file name from standard input.
+Calls Puzzle's constructor for int with the file name as the parameter.
+Calls Puzzle's print function to display the puzzle.
+Loops until Puzzle's isComplete function returns 1/true.
+	Displays prompts for the column, row, and value to place in the puzzle.
+	Gets 3 ints from standard input for that purpose.
+	Calls Puzzle's set function with the column, row, and value.
+	Calls puzzle's print function to display the puzzle.
+Prints a message to standard output telling the user the puzzle is complete.
+
+How the program was verified:
+Part 1 was verified by checking github's web interface.
+Part 2 was verified by modifying the files with the initial puzzles and seeing that they displayed properly.
+Part 3 was also verified by modifying the initial puzzle files to make different scenarios.
+I tested each scenario I could think of and verified correctness with the print function and error messages.
+
+I thought that using a 2D vector did not work well in puzzle, but I was forced to use it.
+All the functionality I needed was available in a 2D array and vectors overcomplicated things.
+This was partly because the puzzle was always 9x9 in this case.
+However, a great use of vectors was to store the initial locations for all of the non-blank values.
+Templating in general in this project was mostly a nuisance and not really a help.
+Obviously, it was necessary to make the puzzle for both int and char, but many things were handled differently.
+For example, with chars, the first row of the file was the word with the 9 characters to use.
+This varied with each example puzzle while with ints, the nine values were always 1-9.
+With ints, I would have liked to check to make sure a value was in that range when filling the puzzle.
+However, since it was templated, I had to check each value one-by-one so it would work with chars.
+I think a better way to do this assignment would be with inheritance and no templating.
+Without the lab's restrictions, I think derived Sodoku and Wordoku classes would inherit well an abstract Puzzle class.
+Additionally, I don't think any other type (like float, double, string) would work at all with Puzzle.
+For that reason, templating helped minimally to make a templated class for ints and chars.
